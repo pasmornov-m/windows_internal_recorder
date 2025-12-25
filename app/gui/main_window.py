@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import threading
+from pathlib import Path
+import sys
 from app.core.system_recorder import SystemAudioRecorder
 
 
@@ -13,12 +15,27 @@ class RecorderGUI(tk.Tk):
         self.title("System Audio Recorder")
         self.geometry("650x420")
         self.minsize(500, 350)
+        
+        self._set_window_icon()
 
         self.recorder = None
         self.recording_thread = None
 
         self._init_style()
         self._build_ui()
+    
+    def _set_window_icon(self):
+        try:
+            icon_path = self._resource_path("app/gui/assets/app.ico")
+            self.iconbitmap(icon_path)
+        except Exception as e:
+            print(f"Icon load failed: {e}")
+    
+    def _resource_path(self, relative_path: str) -> str:
+        if getattr(sys, "frozen", False):
+            # pyinstaller
+            return str(Path(sys._MEIPASS) / relative_path)
+        return str(Path(__file__).resolve().parent.parent / relative_path)
 
     # ---------- STYLE ----------
 

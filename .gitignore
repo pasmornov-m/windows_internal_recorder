@@ -5,8 +5,10 @@ build/
 dist/
 wheels/
 *.egg-info
+*.spec
 
 # Virtual environments
 .venv
 
 Untitled-1.ipynb
+*.wav
