@@ -1,0 +1,45 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  release:
+    types: [created]
+
+jobs:
+  build:
+    name: Build EXE
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install uv
+          uv pip install -e .
+
+
+      - name: Build EXE
+        run: |
+          uv run pyinstaller ^
+            --onefile ^
+            --windowed ^
+            --icon app/gui/assets/app.ico ^
+            --name "WindowsInternalRecorder" ^
+            app/__main__.py
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: WindowsInternalRecorder
+          path: dist/WindowsInternalRecorder.exe
